@@ -1,22 +1,34 @@
 import React, { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { addQuote } from "./quotesSlice";
+import { useDispatch } from "react-redux"
 
 function QuoteForm() {
   const [formData, setFormData] = useState({
-    // set up a controlled form with internal state
-    // look at the form to determine what keys need to go here
+    content: "",
+    author: ""
   });
 
-  function handleChange(event) {
-    // Handle Updating Component State
+  const dispatch = useDispatch()
+
+  function handleChange(e) {
+    setFormData({
+    ...formData,
+    [e.target.id]: e.target.value
+    })
   }
 
-  function handleSubmit(event) {
-    // Handle Form Submit event default
-    // Create quote object from state
-    // Pass quote object to action creator
-    // Update component state to return to default state
+  function handleSubmit(e) {
+    e.preventDefault()
+    const newQ = {
+      ...formData,
+      id: uuid()
+    }
+    dispatch(addQuote(newQ))
+    setFormData({
+      content: "",
+      author: ""
+    })
   }
 
   return (
@@ -25,7 +37,7 @@ function QuoteForm() {
         <div className="col-md-8 col-md-offset-2">
           <div className="panel panel-default">
             <div className="panel-body">
-              <form className="form-horizontal">
+              <form className="form-horizontal" onSubmit={handleSubmit}>
                 <div className="form-group">
                   <label htmlFor="content" className="col-md-4 control-label">
                     Quote
@@ -34,6 +46,7 @@ function QuoteForm() {
                     <textarea
                       className="form-control"
                       id="content"
+                      onChange={handleChange}
                       value={formData.content}
                     />
                   </div>
@@ -47,6 +60,7 @@ function QuoteForm() {
                       className="form-control"
                       type="text"
                       id="author"
+                      onChange={handleChange}
                       value={formData.author}
                     />
                   </div>
